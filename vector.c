@@ -4,7 +4,15 @@
 
 #include "vector.h"
 
+void Vec_swap(Vector *v, size_t x, size_t y) {
+  int tmp = v->data[x];
+  v->data[x] = v->data[y];
+  v->data[y] = tmp;
+}
+
 int Vec_get(Vector *v, size_t index) { return v->data[index]; }
+
+void Vec_set(Vector *v, size_t index, int val) { v->data[index] = val; }
 
 Vector *Vec_slice(Vector *v, size_t left, size_t right) {
   if (left >= right || v == NULL)
@@ -38,7 +46,7 @@ void Vec_push(Vector *v, int val) {
     return;
 
   if (v->length >= v->capacity) {
-    size_t new_capacity = v->capacity == 1 ? 2 : (size_t)v->capacity * 1.5;
+    size_t new_capacity = v->capacity <= 1 ? 2 : (size_t)v->capacity * 1.5;
     int *new_data = (int *)realloc(v->data, new_capacity * sizeof(int));
 
     if (new_data == NULL) {
