@@ -20,7 +20,7 @@ void Vec_free(Vector *v);
 int Vec_get(Vector *v, size_t index);
 void Vec_set(Vector *v, size_t index, int val);
 void Vec_print(Vector *v);
-void Vec_push(Vector *v, int val);
+bool Vec_push(Vector *v, int val);
 PopResult Vec_pop(Vector *v);
 Vector *Vec_slice(Vector *v, size_t left, size_t right);
 void Vec_swap(Vector *v, size_t x, size_t y);
