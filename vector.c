@@ -4,41 +4,46 @@
 
 #include "vector.h"
 
-void Vec_swap(Vector *v, size_t x, size_t y) {
-  int tmp = v->data[x];
-  v->data[x] = v->data[y];
-  v->data[y] = tmp;
+Vector *Vec_new(size_t capacity) {
+  Vector *vec = (Vector *)malloc(sizeof(Vector));
+
+  if (vec == NULL) {
+    return NULL;
+  }
+
+  int *data = (int *)malloc(capacity * sizeof(int));
+
+  if (data == NULL) {
+    return NULL;
+  }
+
+  vec->data = data;
+  vec->length = 0;
+  vec->capacity = capacity;
+
+  return vec;
+}
+
+void Vec_free(Vector *v) {
+  if (v == NULL)
+    return;
+
+  free(v->data);
+  free(v);
 }
 
 int Vec_get(Vector *v, size_t index) { return v->data[index]; }
 
 void Vec_set(Vector *v, size_t index, int val) { v->data[index] = val; }
 
-Vector *Vec_slice(Vector *v, size_t left, size_t right) {
-  if (left >= right || v == NULL)
-    return NULL;
+void Vec_print(Vector *v) {
+  if (v == NULL)
+    return;
 
-  Vector *slice = (Vector *)malloc(sizeof(Vector));
-
-  if (slice == NULL)
-    return NULL;
-
-  size_t slice_length = right - left;
-
-  int *slice_data = (int *)malloc(slice_length * sizeof(int));
-
-  if (slice_data == NULL)
-    return NULL;
-
-  for (int i = 0; i < slice_length; i++) {
-    slice_data[i] = v->data[left + i];
+  for (int i = 0; i < v->length; i++) {
+    printf((i < v->length - 1) ? "%d " : "%d", v->data[i]);
   }
-
-  slice->length = slice_length;
-  slice->capacity = slice_length;
-  slice->data = slice_data;
-
-  return slice;
+  printf("\n");
 }
 
 void Vec_push(Vector *v, int val) {
@@ -78,40 +83,35 @@ PopResult Vec_pop(Vector *v) {
   return result;
 }
 
-Vector *Vec_new(size_t capacity) {
-  Vector *vec = (Vector *)malloc(sizeof(Vector));
-
-  if (vec == NULL) {
-    return NULL;
-  }
-
-  int *data = (int *)malloc(capacity * sizeof(int));
-
-  if (data == NULL) {
-    return NULL;
-  }
-
-  vec->data = data;
-  vec->length = 0;
-  vec->capacity = capacity;
-
-  return vec;
+void Vec_swap(Vector *v, size_t x, size_t y) {
+  int tmp = v->data[x];
+  v->data[x] = v->data[y];
+  v->data[y] = tmp;
 }
 
-void Vec_free(Vector *v) {
-  if (v == NULL)
-    return;
+Vector *Vec_slice(Vector *v, size_t left, size_t right) {
+  if (left >= right || v == NULL)
+    return NULL;
 
-  free(v->data);
-  free(v);
-}
+  Vector *slice = (Vector *)malloc(sizeof(Vector));
 
-void Vec_print(Vector *v) {
-  if (v == NULL)
-    return;
+  if (slice == NULL)
+    return NULL;
 
-  for (int i = 0; i < v->length; i++) {
-    printf((i < v->length - 1) ? "%d " : "%d", v->data[i]);
+  size_t slice_length = right - left;
+
+  int *slice_data = (int *)malloc(slice_length * sizeof(int));
+
+  if (slice_data == NULL)
+    return NULL;
+
+  for (int i = 0; i < slice_length; i++) {
+    slice_data[i] = v->data[left + i];
   }
-  printf("\n");
+
+  slice->length = slice_length;
+  slice->capacity = slice_length;
+  slice->data = slice_data;
+
+  return slice;
 }
