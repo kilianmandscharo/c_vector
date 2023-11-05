@@ -12,7 +12,7 @@
  * @return A pointer to the newly created vector.
  *         Returns NULL if memory allocation fails.
  */
-Vector *Vec_new(size_t capacity) {
+Vector *vec_new(size_t capacity) {
   Vector *vec = (Vector *)malloc(sizeof(Vector));
 
   if (vec == NULL) {
@@ -43,7 +43,7 @@ Vector *Vec_new(size_t capacity) {
  *
  * @param v A pointer to the vector to be deallocated. It can be NULL.
  */
-void Vec_free(Vector *v) {
+void vec_free(Vector *v) {
   if (v == NULL)
     return;
 
@@ -61,7 +61,7 @@ void Vec_free(Vector *v) {
  * @param index The index at which to retrieve the integer.
  * @return The integer value at the specified index.
  */
-int Vec_get(Vector *v, size_t index) { return v->data[index]; }
+int vec_get(Vector *v, size_t index) { return v->data[index]; }
 
 /**
  * Set the integer value at the specified index in the vector.
@@ -73,7 +73,7 @@ int Vec_get(Vector *v, size_t index) { return v->data[index]; }
  * @param index The index at which to set the integer.
  * @param val The integer value to be set at the specified index.
  */
-void Vec_set(Vector *v, size_t index, int val) { v->data[index] = val; }
+void vec_set(Vector *v, size_t index, int val) { v->data[index] = val; }
 
 /**
  * Print the elements of the vector to the standard output.
@@ -82,7 +82,7 @@ void Vec_set(Vector *v, size_t index, int val) { v->data[index] = val; }
  *
  * @param v A pointer to the vector whose elements should be printed.
  */
-void Vec_print(Vector *v) {
+void vec_print(Vector *v) {
   if (v == NULL)
     return;
 
@@ -105,7 +105,7 @@ void Vec_print(Vector *v) {
  * @return true if the push operation is successful; false if reallocation fails
  *         or if the provided vector pointer is NULL.
  */
-bool Vec_push(Vector *v, int val) {
+bool vec_push(Vector *v, int val) {
   if (v == NULL)
     return false;
 
@@ -138,7 +138,7 @@ bool Vec_push(Vector *v, int val) {
  * @return A PopResult structure indicating the success of the operation and the
  *         removed element's value.
  */
-PopResult Vec_pop(Vector *v) {
+PopResult vec_pop(Vector *v) {
   PopResult result;
 
   if (v == NULL || v->length == 0) {
@@ -167,7 +167,7 @@ PopResult Vec_pop(Vector *v) {
  * @param x The index of the first element to swap.
  * @param y The index of the second element to swap.
  */
-void Vec_swap(Vector *v, size_t x, size_t y) {
+void vec_swap(Vector *v, size_t x, size_t y) {
   int tmp = v->data[x];
   v->data[x] = v->data[y];
   v->data[y] = tmp;
@@ -187,7 +187,7 @@ void Vec_swap(Vector *v, size_t x, size_t y) {
  * slice.
  * @return A pointer to the newly created slice vector or NULL on failure.
  */
-Vector *Vec_slice(Vector *v, size_t left, size_t right) {
+Vector *vec_slice(Vector *v, size_t left, size_t right) {
   if (left >= right || v == NULL)
     return NULL;
 
@@ -212,4 +212,36 @@ Vector *Vec_slice(Vector *v, size_t left, size_t right) {
   slice->data = slice_data;
 
   return slice;
+}
+
+/**
+ * Apply a given function to each element of a Vector and create a new Vector
+ * with the results.
+ *
+ * This function takes a source Vector 'v' and a function 'f' that transforms
+ * the elements of 'v'. It applies 'f' to each element of 'v' and stores the
+ * results in a new Vector, which is returned. If 'v' is NULL or memory
+ * allocation for the new Vector fails, NULL is returned.
+ *
+ * @param v     The source Vector to apply the function to.
+ * @param f     A function that transforms each element in 'v' and returns an
+ * integer.
+ *
+ * @return      A new Vector containing the results of applying 'f' to each
+ * element of 'v', or NULL if 'v' is NULL or memory allocation fails.
+ */
+Vector *vec_map(Vector *v, int (*f)(int)) {
+  if (!v)
+    return NULL;
+
+  Vector *new = vec_new(v->length);
+  if (!new)
+    return NULL;
+
+  for (size_t i = 0; i < v->length; i++) {
+    int val = (*f)(vec_get(v, i));
+    vec_push(new, val);
+  }
+
+  return new;
 }
